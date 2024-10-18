@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+   app: backend
+   version: "1.2.4"
+  name: my-app-dep
+  annotations:
+    deployment.kubernetes.io/revision: "1.25.5"
+    kubernetes.io/change-cause: "Pulled from Docker hub"
+spec:
+  replicas: 5
+  revisionHistoryLimit: 10
+  strategy:
+    rollingUpdate:
+      maxSurge: 20%
+      maxUnavailable: 20%
+    type: RollingUpdate
+  selector:
+   matchLabels:
+    app: my-backend-pod
+  template:
+    metadata:
+      labels:
+        app: my-backend-pod
+    spec:
+      containers:
+      - image: vivekanandpv/sunil-env-demo
+        name: my-container
+        env:
+          - name: APP_KEY
+            value: message
+          - name: APP_VALUE
+            value: Hello, Sunil! I am from Kubernetes
+        ports:
+          - containerPort: 8080
+            name: http
+            protocol: TCP
